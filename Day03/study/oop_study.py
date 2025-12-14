@@ -10,6 +10,7 @@ class Student:
     def introduce(self):
         print(f"Xin chào, mình là {self.name}, {self.age} tuổi.")
 
+
 students = [
     Student("An", 20, 8.5),
     Student("Binh", 21, 6.0),

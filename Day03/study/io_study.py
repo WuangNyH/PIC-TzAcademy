@@ -40,4 +40,3 @@ try:
         data = f.read()
 except FileNotFoundError:
     print("Không tìm thấy file!")
-

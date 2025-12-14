@@ -4,11 +4,14 @@ def print_menu() -> None:
     print("2. Tính chỉ số BMI")
     print("3. Thoát")
 
+
 def greet() -> None:
     print("Xin chào! Chúc bạn một ngày tốt lành!")
 
+
 def calculate_bmi() -> None:
     print("Mẹo mày bé!")
+
 
 if __name__ == "__main__":
     while True:

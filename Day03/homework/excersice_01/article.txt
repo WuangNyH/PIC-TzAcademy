@@ -1,0 +1,14 @@
+   this   is,,,   a   VERY   messy   text!!!
+it   contains   multiple...   sentences????
+some   words   are   UPPERCASE,   some   lowercase;;;;
+and   there   are   numbers   like   123,   456!!!
+
+sometimes   people   write (like   this)   or   [that]!!!
+they   use   tooooo   many   spaces        between   words......
+and   forget   how   punctuation   works???!!!
+
+   in   real-life   DATA;;;   you   will   see:::
+random!!!   symbols,,,   repeated???   again   and   again....
+new   lines   appear   out   of   nowhere!!!!
+
+finally,,,   THIS   is   the   LAST   sentence?????!!!!
