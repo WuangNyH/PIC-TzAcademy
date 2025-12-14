@@ -1,0 +1,7 @@
+name,age,city
+Alice,30,Hanoi
+Bob,25,Da Nang
+Charlie,28,Ho Chi Minh City
+Dương,32,Hue
+Eve,22,Can Tho
+
