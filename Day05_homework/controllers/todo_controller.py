@@ -98,3 +98,19 @@ async def update_todo_patch(
 ) -> JSONResponse:
     todo = TodoService(db).update_todo_patch(todo_id, request)
     return response_success(todo.model_dump(), HTTPStatus.OK)
+
+
+@todo_router.delete(
+    "/{todo_id}",
+    status_code=HTTPStatus.NO_CONTENT,
+    responses={
+        404: {"model": ErrorSchema, "description": "Todo not found"},
+        422: {"model": ErrorSchema, "description": "Validation Error"},
+    },
+)
+async def delete_todo(
+    todo_id: int,
+    db: Session = Depends(get_db),
+) -> Response:
+    TodoService(db).delete_todo(todo_id)
+    return Response(status_code=HTTPStatus.NO_CONTENT)

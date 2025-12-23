@@ -88,6 +88,18 @@ class TodoService:
         )
         return TodoOut.model_validate(updated_todo)
 
+    def delete_todo(self, todo_id: int) -> None:
+        todo = self.todo_repository.get_by_id(todo_id)
+
+        if not todo:
+            raise AppException(
+                status_code=HTTPStatus.NOT_FOUND,
+                code="TODO_NOT_FOUND",
+                message=f"Todo with id '{todo_id}' not found.",
+            )
+
+        self.todo_repository.delete(todo)
+
     def is_exist_by_title(self, title: str) -> bool:
         existed_todo = self.todo_repository.get_by_title(title)
         return existed_todo is not None
