@@ -30,7 +30,7 @@ async def create_todo(
 
     response.headers["location"] = f"/todos/{todo.id}"
 
-    return response_success(todo.model_dump(), HTTPStatus.CREATED)
+    return response_success(todo.model_dump())
 
 
 @todo_router.get(
@@ -44,7 +44,7 @@ async def create_todo(
 )
 async def get_todo(todo_id: int, db: Session = Depends(get_db)) -> JSONResponse:
     todo = TodoService(db).get_todo(todo_id)
-    return response_success(todo.model_dump(), HTTPStatus.OK)
+    return response_success(todo.model_dump())
 
 
 @todo_router.get(
@@ -59,7 +59,7 @@ async def list_todos(
     db: Session = Depends(get_db), filters: TodoFilter = Depends()
 ) -> JSONResponse:
     todos = TodoService(db).list_todos(filters)
-    return response_success(todos, HTTPStatus.OK)
+    return response_success(todos)
 
 
 @todo_router.put(
@@ -78,7 +78,7 @@ async def update_todo_put(
     db: Session = Depends(get_db),
 ) -> JSONResponse:
     todo = TodoService(db).update_todo_put(todo_id, request)
-    return response_success(todo.model_dump(), HTTPStatus.OK)
+    return response_success(todo.model_dump())
 
 
 @todo_router.patch(
@@ -97,7 +97,7 @@ async def update_todo_patch(
     db: Session = Depends(get_db),
 ) -> JSONResponse:
     todo = TodoService(db).update_todo_patch(todo_id, request)
-    return response_success(todo.model_dump(), HTTPStatus.OK)
+    return response_success(todo.model_dump())
 
 
 @todo_router.delete(

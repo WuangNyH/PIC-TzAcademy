@@ -2,8 +2,8 @@ from typing import Any
 
 from starlette.responses import JSONResponse
 
+from schemas import SuccessResponse
 
-def response_success(data: Any, status_code: int = 200) -> JSONResponse:
-    return JSONResponse(
-        status_code=status_code, content={"success": True, "data": data}
-    )
+
+def response_success(data: Any) -> JSONResponse:
+    return JSONResponse(SuccessResponse.of(data).model_dump())
