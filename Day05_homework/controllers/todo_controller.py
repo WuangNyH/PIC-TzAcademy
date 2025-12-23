@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse, Response
 
 from dependencies.db import get_db
-from schemas import TodoOut, TodoCreate
+from schemas import TodoOut, TodoCreate, TodoUpdate
 from schemas.request.todo_schema import TodoFilter
 from schemas.response.error_response import ErrorSchema
 from services.todo_service import TodoService
@@ -60,3 +60,41 @@ async def list_todos(
 ) -> JSONResponse:
     todos = TodoService(db).list_todos(filters)
     return response_success(todos, HTTPStatus.OK)
+
+
+@todo_router.put(
+    "/{todo_id}",
+    response_model=TodoOut,
+    status_code=HTTPStatus.OK,
+    responses={
+        404: {"model": ErrorSchema, "description": "Todo not found"},
+        409: {"model": ErrorSchema, "description": "Todo title already exists"},
+        422: {"model": ErrorSchema, "description": "Validation Error"},
+    },
+)
+async def update_todo_put(
+    todo_id: int,
+    request: TodoCreate,
+    db: Session = Depends(get_db),
+) -> JSONResponse:
+    todo = TodoService(db).update_todo_put(todo_id, request)
+    return response_success(todo.model_dump(), HTTPStatus.OK)
+
+
+@todo_router.patch(
+    "/{todo_id}",
+    response_model=TodoOut,
+    status_code=HTTPStatus.OK,
+    responses={
+        404: {"model": ErrorSchema, "description": "Todo not found"},
+        409: {"model": ErrorSchema, "description": "Todo title already exists"},
+        422: {"model": ErrorSchema, "description": "Validation Error"},
+    },
+)
+async def update_todo_patch(
+    todo_id: int,
+    request: TodoUpdate,
+    db: Session = Depends(get_db),
+) -> JSONResponse:
+    todo = TodoService(db).update_todo_patch(todo_id, request)
+    return response_success(todo.model_dump(), HTTPStatus.OK)

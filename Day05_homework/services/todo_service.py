@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from exceptions.app_exceptions import AppException
 from models import Todo
 from repositories import TodoRepository
-from schemas import TodoCreate, TodoOut
+from schemas import TodoCreate, TodoOut, TodoUpdate
 from schemas.request.todo_schema import TodoFilter
 
 
@@ -41,6 +41,52 @@ class TodoService:
     def list_todos(self, filters: TodoFilter) -> list[Todo]:
         todos = self.todo_repository.search(**filters.model_dump())
         return [TodoOut.model_validate(todo).model_dump() for todo in todos]
+
+    def update_todo_put(self, todo_id, data: TodoCreate) -> TodoOut:
+        todo = self.todo_repository.get_by_id(todo_id)
+
+        if not todo:
+            raise AppException(
+                status_code=HTTPStatus.NOT_FOUND,
+                code="TODO_NOT_FOUND",
+                message=f"Todo with id '{todo_id}' not found.",
+            )
+
+        if todo.title != data.title and self.is_exist_by_title(data.title):
+            raise AppException(
+                status_code=HTTPStatus.CONFLICT,
+                code="TODO_ALREADY_EXISTS",
+                message=f"Todo with title '{data.title}' already exists.",
+            )
+
+        updated_todo = self.todo_repository.update(todo, data.model_dump())
+        return TodoOut.model_validate(updated_todo)
+
+    def update_todo_patch(self, todo_id, data: TodoUpdate) -> TodoOut:
+        todo = self.todo_repository.get_by_id(todo_id)
+
+        if not todo:
+            raise AppException(
+                status_code=HTTPStatus.NOT_FOUND,
+                code="TODO_NOT_FOUND",
+                message=f"Todo with id '{todo_id}' not found.",
+            )
+
+        if (
+            data.title
+            and todo.title != data.title
+            and self.is_exist_by_title(data.title)
+        ):
+            raise AppException(
+                status_code=HTTPStatus.CONFLICT,
+                code="TODO_ALREADY_EXISTS",
+                message=f"Todo with title '{data.title}' already exists.",
+            )
+
+        updated_todo = self.todo_repository.update(
+            todo, data.model_dump(exclude_unset=True)
+        )
+        return TodoOut.model_validate(updated_todo)
 
     def is_exist_by_title(self, title: str) -> bool:
         existed_todo = self.todo_repository.get_by_title(title)
