@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse, Response
 
 from dependencies.db import get_db
 from schemas import TodoOut, TodoCreate
+from schemas.request.todo_schema import TodoFilter
 from schemas.response.error_response import ErrorSchema
 from services.todo_service import TodoService
 from utils.response import response_success
@@ -29,4 +30,33 @@ async def create_todo(
 
     response.headers["location"] = f"/todos/{todo.id}"
 
-    return response_success(todo, HTTPStatus.CREATED)
+    return response_success(todo.model_dump(), HTTPStatus.CREATED)
+
+
+@todo_router.get(
+    "/{todo_id}",
+    response_model=TodoOut,
+    status_code=HTTPStatus.OK,
+    responses={
+        404: {"model": ErrorSchema, "description": "Todo not found"},
+        422: {"model": ErrorSchema, "description": "Validation Error"},
+    },
+)
+async def get_todo(todo_id: int, db: Session = Depends(get_db)) -> JSONResponse:
+    todo = TodoService(db).get_todo(todo_id)
+    return response_success(todo.model_dump(), HTTPStatus.OK)
+
+
+@todo_router.get(
+    "/",
+    response_model=list[TodoOut],
+    status_code=HTTPStatus.OK,
+    responses={
+        422: {"model": ErrorSchema, "description": "Validation Error"},
+    },
+)
+async def list_todos(
+    db: Session = Depends(get_db), filters: TodoFilter = Depends()
+) -> JSONResponse:
+    todos = TodoService(db).list_todos(filters)
+    return response_success(todos, HTTPStatus.OK)

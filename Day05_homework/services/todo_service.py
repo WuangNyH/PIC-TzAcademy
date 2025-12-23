@@ -6,6 +6,7 @@ from exceptions.app_exceptions import AppException
 from models import Todo
 from repositories import TodoRepository
 from schemas import TodoCreate, TodoOut
+from schemas.request.todo_schema import TodoFilter
 
 
 class TodoService:
@@ -24,6 +25,22 @@ class TodoService:
         new_todo = Todo(**data.model_dump())
         created_todo = self.todo_repository.create(new_todo)
         return TodoOut.model_validate(created_todo)
+
+    def get_todo(self, todo_id: int) -> TodoOut:
+        todo = self.todo_repository.get_by_id(todo_id)
+
+        if not todo:
+            raise AppException(
+                status_code=HTTPStatus.NOT_FOUND,
+                code="TODO_NOT_FOUND",
+                message=f"Todo with id '{todo_id}' not found.",
+            )
+
+        return TodoOut.model_validate(todo)
+
+    def list_todos(self, filters: TodoFilter) -> list[Todo]:
+        todos = self.todo_repository.search(**filters.model_dump())
+        return [TodoOut.model_validate(todo).model_dump() for todo in todos]
 
     def is_exist_by_title(self, title: str) -> bool:
         existed_todo = self.todo_repository.get_by_title(title)
